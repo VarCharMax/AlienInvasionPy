@@ -36,7 +36,7 @@ def get_number_rows(ai_settings, ship_height, alien_height) -> int:
     number_rows = int(available_space_y / (2 * alien_height))
     return number_rows
 
-def get_number_aliens_x(ai_settings, alien_width):
+def get_number_aliens_x(ai_settings, alien_width) -> int:
     """Determine the number of aliens that fit in a row."""
     # Spacing between each alien is equal to one alien width.
     available_space_x = ai_settings.screen_width - 2 * alien_width
@@ -76,7 +76,7 @@ def change_fleet_direction(ai_settings, aliens) -> None:
 
     ai_settings.fleet_direction *= -1
 
-def check_fleet_edges(ai_settings, aliens):
+def check_fleet_edges(ai_settings, aliens) -> None:
     """Respond appropriately if any aliens have reached an edge."""
     for alien in aliens.sprites():
         if alien.check_edges():
@@ -85,6 +85,7 @@ def check_fleet_edges(ai_settings, aliens):
 
 def update_bullets(ai_settings, screen, ship, aliens, bullets) -> None:
     """Update position of bullets and get rid of old bullets."""
+
     bullets.update()
 
     for bullet in bullets.copy():

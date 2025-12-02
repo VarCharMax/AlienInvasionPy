@@ -1,7 +1,6 @@
 """_summary_
 """
 
-from typing import Literal
 import pygame
 from pygame.sprite import Sprite
 
@@ -26,16 +25,14 @@ class Alien(Sprite):
         # Store the alien's exact position.
         self.x = float(self.rect.x)
 
-    def check_edges(self) -> None | Literal[True]:
+    def check_edges(self) -> bool:
         """Return True if alien is at edge of screen."""
         screen_rect = self.screen.get_rect()
-
         if self.rect.right >= screen_rect.right:
             return True
-
         if self.rect.left <= 0:
             return True
-
+        return False
 
     def update(self) -> None:
         """Move the alien right or left."""
