@@ -3,6 +3,7 @@
 
 import sys
 from time import sleep
+from types import NoneType
 import pygame
 from bullet import Bullet
 from alien import Alien
@@ -97,7 +98,7 @@ def update_bullets(ai_settings, screen, ship, aliens, bullets) -> None:
 def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets) -> None:
     """Respond to bullet-alien collisions."""
     # Remove any bullets and aliens that have collided.
-    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
+    pygame.sprite.groupcollide(bullets, aliens, True, True)
 
     if len(aliens) == 0:
         bullets.empty()
@@ -117,6 +118,13 @@ def update_aliens(ai_settings, stats, screen, ship, aliens, bullets) -> None:
 
     check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets)
 
+def check_play_button(stats, play_button, mouse_x, mouse_y) -> None:
+    """_summary_
+    """
+    if play_button.rect.collidepoint(mouse_x, mouse_y):
+        stats.game_active = True
+
+
 def check_keydown_events(event, ai_settings, screen, ship, bullets) -> None:
     """Respond to keypresses."""
     if event.key == pygame.K_RIGHT:
@@ -135,7 +143,7 @@ def check_keyup_events(event, ship) -> None:
     elif event.key == pygame.K_LEFT:
         ship.moving_left = False
 
-def check_events(ai_settings, screen, ship, bullets) -> None:
+def check_events(ai_settings, screen, stats, play_button,  ship, bullets) -> None:
     """Respond to keypresses and mouse events."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -144,6 +152,9 @@ def check_events(ai_settings, screen, ship, bullets) -> None:
             check_keydown_events(event, ai_settings, screen, ship, bullets)
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            check_play_button(stats, play_button, mouse_x, mouse_y)
 
 def update_screen(ai_settings, screen, stats, ship, aliens, bullets, play_button) -> None:
     """Update images on the screen and flip to the new screen."""
