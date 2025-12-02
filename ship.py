@@ -6,7 +6,7 @@ import pygame
 class Ship():
     """_summary_
     """
-    def __init__(self, ai_settings, screen):
+    def __init__(self, ai_settings, screen) -> None:
         """Initialize the ship and set its starting position."""
         self.screen = screen
         self.ai_settings = ai_settings
@@ -37,7 +37,7 @@ class Ship():
             self.centre -= self.ai_settings.ship_speed_factor
 
         # Update rect object from self.centre.
-        self.rect.centerx = self.centre
+        self.rect.centerx = int(self.centre)
 
     def blitme(self):
         """Draw the ship at its current location."""

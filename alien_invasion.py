@@ -9,10 +9,10 @@ from game_stats import GameStats
 from button import Button
 import game_functions as gf
 
-def run_game():
+def run_game() -> None:
     """_summary_
     """
-    # Initialize game and create a screen object.
+
     pygame.init()
     ai_settings = Settings()
     screen = pygame.display.set_mode((ai_settings.screen_width, ai_settings.screen_height))
