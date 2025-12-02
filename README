@@ -10,4 +10,4 @@ Then I ran the pygame installer against it:
 
 In VS Code, I added a Python 3.13 environment (.env) into the project's folder, and installed the precompiled pygame library into it, using the same syntax as above.
 
-Whenever you run the project, make sure the (.nenv) has loaded in the terminal environment.
+Whenever you run the project, make sure the (.env) has loaded in the terminal environment.
