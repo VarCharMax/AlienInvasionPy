@@ -165,13 +165,16 @@ def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets)
             mouse_x, mouse_y = pygame.mouse.get_pos()
             check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y)
 
-def update_screen(ai_settings, screen, stats, ship, aliens, bullets, play_button) -> None:
+def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_button) -> None:
     """Update images on the screen and flip to the new screen."""
     screen.fill(ai_settings.bg_color)
     ship.blitme()
     aliens.draw(screen)
     for bullet in bullets.sprites():
         bullet.draw_bullet()
+
+    # Draw the score information
+    sb.show_score()
 
     if not stats.game_active:
         play_button.draw_button()
