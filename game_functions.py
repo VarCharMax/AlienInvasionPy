@@ -3,7 +3,6 @@
 
 import sys
 from time import sleep
-from types import NoneType
 import pygame
 from bullet import Bullet
 from alien import Alien
@@ -20,6 +19,7 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets) -> None:
         sleep(0.5)
     else:
         stats.game_active = False
+        pygame.mouse.set_visible(True)
 
 def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets) -> None:
     """Check if any aliens have reached the bottom of the screen."""
@@ -101,8 +101,10 @@ def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets) ->
     pygame.sprite.groupcollide(bullets, aliens, True, True)
 
     if len(aliens) == 0:
+        # Destroy existing bulletes, speed up game, and create new fleet.
         bullets.empty()
         create_fleet(ai_settings, screen, ship, aliens)
+        ai_settings.increase_speed()
 
 def update_aliens(ai_settings, stats, screen, ship, aliens, bullets) -> None:
     """
@@ -118,12 +120,19 @@ def update_aliens(ai_settings, stats, screen, ship, aliens, bullets) -> None:
 
     check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets)
 
-def check_play_button(stats, play_button, mouse_x, mouse_y) -> None:
+def check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y) -> None:
     """_summary_
     """
-    if play_button.rect.collidepoint(mouse_x, mouse_y):
+    button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
+    if button_clicked and not stats.game_active:
+        ai_settings.initialise_dynamic_settings()
+        pygame.mouse.set_visible(False)
+        stats.reset_stats()
         stats.game_active = True
-
+        aliens.empty()
+        bullets.empty()
+        create_fleet(ai_settings, screen, ship, aliens)
+        ship.centre_ship()
 
 def check_keydown_events(event, ai_settings, screen, ship, bullets) -> None:
     """Respond to keypresses."""
@@ -143,7 +152,7 @@ def check_keyup_events(event, ship) -> None:
     elif event.key == pygame.K_LEFT:
         ship.moving_left = False
 
-def check_events(ai_settings, screen, stats, play_button,  ship, bullets) -> None:
+def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets) -> None:
     """Respond to keypresses and mouse events."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -154,7 +163,7 @@ def check_events(ai_settings, screen, stats, play_button,  ship, bullets) -> Non
             check_keyup_events(event, ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            check_play_button(stats, play_button, mouse_x, mouse_y)
+            check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y)
 
 def update_screen(ai_settings, screen, stats, ship, aliens, bullets, play_button) -> None:
     """Update images on the screen and flip to the new screen."""
