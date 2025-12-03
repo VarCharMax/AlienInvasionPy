@@ -2,12 +2,14 @@
 """
 
 import pygame
+from pygame.sprite import Sprite
 
-class Ship():
+class Ship(Sprite):
     """_summary_
     """
     def __init__(self, ai_settings, screen) -> None:
         """Initialize the ship and set its starting position."""
+        super().__init__()
         self.screen = screen
         self.ai_settings = ai_settings
 
@@ -29,7 +31,7 @@ class Ship():
         """Center the ship on the screen."""
         self.centre = self.screen_rect.centerx
 
-    def update(self):
+    def update(self) -> None:
         """Update the ship's position based on movement flag."""
         if self.moving_right and self.rect.right < self.screen_rect.right:
             self.centre += self.ai_settings.ship_speed_factor
