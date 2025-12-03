@@ -101,8 +101,10 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
     collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
 
     if collisions:
-        stats.score += ai_settings.alien_points
-        sb.prep_score()
+        for aliens_hit in collisions.values():
+            stats.score += ai_settings.alien_points * len(aliens_hit)
+            sb.prep_score()
+        check_high_score(stats, sb)
 
     if len(aliens) == 0:
         # Destroy existing bulletes, speed up game, and create new fleet.
@@ -138,6 +140,12 @@ def check_play_button(ai_settings, screen, stats, play_button, ship,
         bullets.empty()
         create_fleet(ai_settings, screen, ship, aliens)
         ship.centre_ship()
+
+def check_high_score(stats, sb) -> None:
+    """Check to see if there's a new high score."""
+    if stats.score > stats.high_score:
+        stats.high_score = stats.score
+        sb.prep_high_score()
 
 def check_keydown_events(event, ai_settings, screen, ship, bullets) -> None:
     """Respond to keypresses."""
