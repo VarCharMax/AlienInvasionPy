@@ -29,6 +29,7 @@ class Ship(Sprite):
     def centre_ship(self) -> None:
         """Center the ship on the screen."""
         self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
 
     def update(self) -> None:
         """Update the ship's position based on movement flag."""
@@ -37,7 +38,7 @@ class Ship(Sprite):
         if self.moving_left and self.rect.left > 0:
             self.x -= self.settings.ship_speed
 
-        # Update rect object from self.centre.
+        # Update rect object from self.x.
         self.rect.x = int(self.rect.x)
 
     def blitme(self) -> None:

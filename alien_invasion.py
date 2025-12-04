@@ -2,6 +2,8 @@
 """
 import sys
 from time import sleep
+import json
+from pathlib import Path
 import pygame
 from settings import Settings
 from game_stats import GameStats
@@ -32,10 +34,10 @@ class AlienInvasion:
 
         self._create_fleet()
 
+        self.play_button = Button(self, "Play")
+
         # Start Alien Invasion in an inactive state.
         self.game_active = False
-
-        self.play_button = Button(self, "Play")
 
     def run_game(self):
         """Start the main loop for the game."""
@@ -49,6 +51,29 @@ class AlienInvasion:
 
             self._update_screen()
             self.clock.tick(60)
+
+    def _start_game(self):
+        """Start a new game."""
+        # Reset the game settings.
+        self.settings.initialise_dynamic_settings()
+
+        # Reset the game statistics.
+        self.stats.reset_stats()
+        self.game_active = True
+        self.sb.prep_score()
+        self.sb.prep_level()
+        self.sb.prep_ships()
+
+        # Get rid of any remaining aliens and bullets.
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Create a new fleet and center the ship.
+        self._create_fleet()
+        self.ship.centre_ship()
+
+        # Hide the mouse cursor.
+        pygame.mouse.set_visible(False)
 
     def _check_events(self) -> None:
         """Respond to keypresses and mouse events."""
@@ -68,21 +93,7 @@ class AlienInvasion:
         """
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.game_active:
-            self.settings.initialise_dynamic_settings()
-
-            self.stats.reset_stats()
-            self.sb.prep_score()
-            self.sb.prep_level()
-            self.sb.prep_ships()
-            self.game_active = True
-
-            self.bullets.empty()
-            self.aliens.empty()
-
-            self._create_fleet()
-            self.ship.centre_ship()
-
-            pygame.mouse.set_visible(False)
+            self._start_game()
 
     def _check_keydown_events(self, event) -> None:
         """Respond to keypresses."""
@@ -91,9 +102,11 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
-            sys.exit()
+            self._close_game()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
+        elif event.key == pygame.K_p and not self.game_active:
+            self._start_game()
 
     def _check_keyup_events(self, event) -> None:
         """Respond to key releases."""
@@ -180,16 +193,17 @@ class AlienInvasion:
         # Create an alien and keep adding aliens until there's no room left.
         # Spacing between aliens is one alien width and one alien height.
         alien = Alien(self)
-
         alien_width, alien_height = alien.rect.size
+
         current_x, current_y = alien_width, alien_height
         while current_y < (self.settings.screen_height - 3 * alien_height):
             while current_x < (self.settings.screen_width - 2 * alien_width):
                 self._create_alien(current_x, current_y)
                 current_x += 2 * alien_width
-             # Finished a row; reset x value, and increment y value.
+
+            # Finished a row; reset x value, and increment y value.
             current_x = alien_width
-            current_y = alien_height
+            current_y += 2 * alien_height
 
     def _create_alien(self, x_position, y_position) -> None:
         """Create an alien and place it in the row."""
@@ -212,6 +226,16 @@ class AlienInvasion:
             alien.rect.y += self.settings.fleet_drop_speed
 
         self.settings.fleet_direction *= -1
+
+    def _close_game(self):
+        """Save high score and exit."""
+        saved_high_score = self.stats.get_saved_high_score()
+        if self.stats.high_score > saved_high_score:
+            path = Path('high_score.json')
+            contents = json.dumps(self.stats.high_score)
+            path.write_text(contents)
+
+        sys.exit()
 
     def _update_screen(self) -> None:
         """Update images on the screen, and flip to the new screen."""
