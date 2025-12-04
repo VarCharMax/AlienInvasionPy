@@ -3,6 +3,7 @@
 
 import pygame
 from pygame.sprite import Sprite
+from resource_path import resource_path
 
 class Alien(Sprite):
     """A class to represent a single alien in the fleet."""
@@ -13,7 +14,7 @@ class Alien(Sprite):
         self.screen = ai_game.screen
         self.settings = ai_game.settings
 
-        self.image = pygame.image.load('images/alien.bmp')
+        self.image = pygame.image.load(resource_path("images", "alien.bmp"))
         self.rect = self.image.get_rect()
 
         # Store the alien's exact position.
