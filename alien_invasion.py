@@ -233,7 +233,7 @@ class AlienInvasion:
         if self.stats.high_score > saved_high_score:
             path = Path('high_score.json')
             contents = json.dumps(self.stats.high_score)
-            path.write_text(contents)
+            path.write_text(contents, 'utf-8')
 
         sys.exit()
 
