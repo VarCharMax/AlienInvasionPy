@@ -39,7 +39,7 @@ class Ship(Sprite):
             self.x -= self.settings.ship_speed
 
         # Update rect object from self.x.
-        self.rect.x = int(self.rect.x)
+        self.rect.x = int(self.x)
 
     def blitme(self) -> None:
         """Draw the ship at its current location."""
