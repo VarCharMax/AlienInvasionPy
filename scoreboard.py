@@ -8,12 +8,14 @@ from ship import Ship
 class Scoreboard():
     """_summary_
     """
-    def __init__(self, ai_settings, screen, stats) -> None:
+    def __init__(self, ai_game) -> None:
         """Initialize scorekeeping attributes."""
-        self.screen = screen
-        self.screen_rect = screen.get_rect()
-        self.ai_settings = ai_settings
-        self.stats = stats
+        self.ai_game = ai_game
+
+        self.screen = ai_game.screen
+        self.screen_rect = self.screen.get_rect()
+        self.settings = ai_game.settings
+        self.stats = ai_game.stats
 
         self.text_color = (30, 30, 30)
         self.font = pygame.font.SysFont(None, 48)
@@ -28,7 +30,8 @@ class Scoreboard():
         rounded_score = round(self.stats.score, -1)
         score_str = f"{rounded_score:,}"
         self.score_image = self.font.render(score_str, True, self.text_color,
-            self.ai_settings.bg_color)
+            self.settings.bg_color)
+
         # Display the score at the top right of the screen.
         self.score_rect = self.score_image.get_rect()
         self.score_rect.right = self.screen_rect.right - 20
@@ -39,7 +42,7 @@ class Scoreboard():
         high_score = round(self.stats.high_score, -1)
         high_score_str = f"{high_score:,}"
         self.high_score_image = self.font.render(high_score_str, True,
-            self.text_color, self.ai_settings.bg_color)
+            self.text_color, self.settings.bg_color)
         # Center the high score at the top of the screen.
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
@@ -48,7 +51,8 @@ class Scoreboard():
     def prep_level(self):
         """Turn the level into a rendered image."""
         self.level_image = self.font.render(str(self.stats.level), True,
-            self.text_color, self.ai_settings.bg_color)
+            self.text_color, self.settings.bg_color)
+
         # Position the level below the score.
         self.level_rect = self.level_image.get_rect()
         self.level_rect.right = self.score_rect.right
@@ -58,10 +62,16 @@ class Scoreboard():
         """Show how many ships are left."""
         self.ships = Group()
         for ship_number in range(self.stats.ships_left):
-            ship = Ship(self.ai_settings, self.screen)
+            ship = Ship(self.ai_game)
             ship.rect.x = 10 + ship_number * ship.rect.width
             ship.rect.y = 10
             self.ships.add(ship)
+
+    def check_high_score(self) -> None:
+        """Check to see if there's a new high score."""
+        if self.stats.score > self.stats.high_score:
+            self.stats.high_score = self.stats.score
+            self.prep_high_score()
 
     def show_score(self) -> None:
         """Draw scores and ships to the screen."""
