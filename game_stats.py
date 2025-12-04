@@ -22,7 +22,7 @@ class GameStats():
         """Gets high score from file, if it exists."""
         path = Path('high_score.json')
         try:
-            contents = path.read_text()
+            contents = path.read_text('utf-8')
             high_score = json.loads(contents)
             return high_score
         except FileNotFoundError:

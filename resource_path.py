@@ -5,8 +5,6 @@
 
         # Example usage for an image in the 'images' folder:
         image_path = resource_path("images", "image.png")
-        # Use image_path in your application code (e.g., in a GUI library)
-
 """
 import os
 import sys
