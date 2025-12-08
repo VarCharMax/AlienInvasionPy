@@ -1,27 +1,30 @@
-"""_summary_
-"""
+"""_summary_"""
+
 import sys
 from time import sleep
 import json
 from pathlib import Path
 import pygame
+from alien import Alien
 from settings import Settings
 from game_stats import GameStats
 from scoreboard import Scoreboard
 from button import Button
 from ship import Ship
 from bullet import Bullet
-from alien import Alien
+
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
+
     def __init__(self) -> None:
         """Initialize the game, and create game resources."""
         pygame.init()
         self.clock = pygame.time.Clock()
         self.settings = Settings()
         self.screen = pygame.display.set_mode(
-            (self.settings.screen_width, self.settings.screen_height))
+            (self.settings.screen_width, self.settings.screen_height)
+        )
         pygame.display.set_caption("Alien Invasion")
         self.stats = GameStats(self)
         self.sb = Scoreboard(self)
@@ -82,8 +85,7 @@ class AlienInvasion:
                 self.__check_play_button(mouse_pos)
 
     def __check_play_button(self, mouse_pos) -> None:
-        """_summary_
-        """
+        """_summary_"""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.game_active:
             self.__start_game()
@@ -161,13 +163,13 @@ class AlienInvasion:
     def __update_aliens(self) -> None:
         """
         Check if the fleet is at an edge,
-        and then update the postions of all aliens in the fleet.
+        and then update the positions of all aliens in the fleet.
         """
         self.__check_fleet_edges()
         self.aliens.update()
 
         # Look for alien-ship collisions.
-        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):  # type: ignore
             self.__ship_hit()
 
         self.__check_aliens_bottom()
@@ -224,9 +226,9 @@ class AlienInvasion:
         """Save high score and exit."""
         saved_high_score = self.stats.get_saved_high_score()
         if self.stats.high_score > saved_high_score:
-            path = Path('high_score.json')
+            path = Path("high_score.json")
             contents = json.dumps(self.stats.high_score)
-            path.write_text(contents, 'utf-8')
+            path.write_text(contents, "utf-8")
 
         sys.exit()
 
@@ -245,6 +247,7 @@ class AlienInvasion:
 
         pygame.display.flip()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     ai = AlienInvasion()
     ai.run_game()
